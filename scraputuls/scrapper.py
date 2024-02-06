@@ -78,19 +78,28 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
     trait_map = dict()
 
     for trait_id in range(len(traits_soup) // 2):
-        trait = traits_soup[trait_id*2].title.text.strip()
-        value = traits_soup[trait_id*2+1].text.strip()
+        trait = traits_soup[trait_id * 2].title.text.strip()
+        value = traits_soup[trait_id * 2 + 1].text.strip()
 
         trait_map[trait] = value
 
     trait_map["tags"] = article_tags
+    trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a["href"]
 
     return trait_map
 
 
-def scrape_article():
-    """
-        should return the article text, attributes and url's
-        to the author's and commentators profiles
-    """
+def get_comments_accounts(article_link: str) -> tuple:
+    comments = get_soup(article_link + "comments/")
+    return tuple(
+        p.a["href"] for p in comments.find_all(
+            "span", {
+                "class": "tm-user-info__user tm-user-info__user_appearance-default"
+            }
+        )
+    )
+
+
+def scrape_profiles(profile_link: str) -> dict:
+    # TODO scrape profile
     pass
