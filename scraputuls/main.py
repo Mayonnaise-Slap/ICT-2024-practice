@@ -23,4 +23,3 @@ if __name__ == '__main__':
     url = "https://habr.com/ru/hubs/machine_learning/articles/top/alltime/"
 
     print(scrape_hub(url), 3)
-

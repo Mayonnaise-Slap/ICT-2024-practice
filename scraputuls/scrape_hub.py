@@ -1,4 +1,4 @@
-from scrapper import get_soup
+from utils import get_soup
 from bs4 import BeautifulSoup
 
 
@@ -24,6 +24,3 @@ def get_page_urls(hub_page_link: str) -> list[str]:
         data_links.append(base_url + href)
 
     return data_links
-
-
-link = "https://habr.com/ru/hubs/machine_learning/articles/top/alltime/"
