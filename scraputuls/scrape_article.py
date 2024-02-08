@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from utils import get_soup
 from bs4 import BeautifulSoup
 
@@ -68,16 +70,21 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
 
     trait_map["tags"] = article_tags
     trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a["href"]
-
     return trait_map
 
 
 def get_comments_accounts(article_link: str) -> tuple:
     comments = get_soup(article_link + "comments/")
     return tuple(
-        p.a["href"] for p in comments.find_all(
+        "https://habr.com" + p.a["href"] for p in comments.find_all(
             "span", {
                 "class": "tm-user-info__user tm-user-info__user_appearance-default"
             }
         )
     )
+
+
+def get_article_contents(url: str) -> tuple[dict, tuple]:
+    soup = get_soup(url)
+    result = get_article_attrs(soup)
+    return result, get_comments_accounts(url)
