@@ -5,8 +5,11 @@ from scrape_article import get_article_contents
 from scrape_user import scrape_profile
 import multiprocessing as mp
 from itertools import chain
-
+import sys
 import json
+
+
+sys.setrecursionlimit(25000)
 
 
 def scrape_hub(url: str, n_pages: int = None) -> list:
@@ -38,29 +41,31 @@ def scrape_article(urls: list) -> tuple[Any, Any]:
 def scrape_users(urls: list) -> dict:
     pool = mp.Pool()
 
-    contents = pool.map_async(scrape_profile, urls).get()
+    contents = pool.map_async(scrape_profile, urls)
     pool.close()
     pool.join()
 
-    return contents
+    return contents.get()
 
 
 if __name__ == '__main__':
-    url = "https://habr.com/ru/hubs/machine_learning/articles/top/alltime/"
-
-    three_pages = scrape_hub(url, 2)
-    stuff = scrape_article(three_pages)
-
-    articles, comments = [], []
-    for i,j in stuff:
-        articles.append(i)
-        comments.append(j)
-
-    with open("../data/articles.json", "w") as f:
-        json.dump(articles, f)
-
-    with open("../data/comments.json", "w") as f:
-        json.dump(list(chain.from_iterable(comments)), f)
+    # url = "https://habr.com/ru/hubs/machine_learning/articles/top/alltime/"
+    #
+    # three_pages = scrape_hub(url, 2)
+    # stuff = scrape_article(three_pages)
+    #
+    # articles, comments = [], []
+    # for i,j in stuff:
+    #     articles.append(i)
+    #     comments.append(j)
+    #
+    # with open("../data/articles.json", "w") as f:
+    #     json.dump(articles, f)
+    #
+    # with open("../data/comments.json", "w") as f:
+    #     json.dump(list(chain.from_iterable(comments)), f)
 
     with open("../data/comments.json", "r") as f:
-        print(scrape_users(json.loads(f.read())))
+        a = json.loads(f.read())
+
+    print(scrape_users(a[:500]))

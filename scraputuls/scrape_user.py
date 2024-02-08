@@ -1,8 +1,12 @@
 from utils import get_soup
 from bs4 import BeautifulSoup
+from time import sleep
+from random import random
 
 
 def scrape_profile(profile_link: str) -> dict:
+    sleep(random())
+
     profile_soup: BeautifulSoup = get_soup(profile_link)
 
     data = dict()
