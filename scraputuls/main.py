@@ -1,10 +1,10 @@
-from typing import Any
-
 from scrape_hub import get_page_urls, get_number_of_pages, get_soup
 from scrape_article import get_article_contents
 from scrape_user import scrape_profile
-import multiprocessing as mp
 from itertools import chain
+from typing import Any
+import multiprocessing.dummy as mp
+import numpy as np
 import sys
 import json
 
@@ -49,23 +49,20 @@ def scrape_users(urls: list) -> dict:
 
 
 if __name__ == '__main__':
-    # url = "https://habr.com/ru/hubs/machine_learning/articles/top/alltime/"
-    #
-    # three_pages = scrape_hub(url, 2)
-    # stuff = scrape_article(three_pages)
-    #
-    # articles, comments = [], []
-    # for i,j in stuff:
-    #     articles.append(i)
-    #     comments.append(j)
-    #
-    # with open("../data/articles.json", "w") as f:
-    #     json.dump(articles, f)
-    #
-    # with open("../data/comments.json", "w") as f:
-    #     json.dump(list(chain.from_iterable(comments)), f)
-
     with open("../data/comments.json", "r") as f:
-        a = json.loads(f.read())
+        data = json.load(f)
 
-    print(scrape_users(a[:500]))
+    users_data = list()
+
+    for i, subset in enumerate(np.array_split(data, 50)):
+        print(f"scraping {i+1} subset")
+        try:
+            user_subset = scrape_users(subset.tolist())
+        except Exception as e:
+            print(f"Failed batch {i+1}: {e}")
+            continue
+
+        users_data += user_subset
+
+    with open("../data/users.json", "w") as users_file:
+        json.dump(users_data, users_file, ensure_ascii=False, indent=4)
