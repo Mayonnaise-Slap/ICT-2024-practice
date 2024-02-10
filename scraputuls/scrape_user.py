@@ -25,12 +25,18 @@ def scrape_profile(profile_link: str) -> dict:
                             i.text for i in vals[i].find_all("div", {"class": "tm-user-specialization__skill"}))}
                 case "Состоит в хабах":
                     data[tag.string.strip()] = list(i.text for i in vals[i].find_all("a", {"class": "tm-user-hubs__hub"}))
-                case "Подписан на компании":
-                    data[tag.string.strip()] = list(
+                case "Подписан на компании" | "Подписана на компании":
+                    tg = tag.string.strip()
+                    if tg == "Подписана на компании":
+                        tg = "Подписан на компании"
+                    data[tg] = list(
                         i.text for i in vals[i].find_all("a", {"class": "tm-company-snippet__title"}))
-                case "Дата рождения" | "Зарегистрирован":
+                case "Дата рождения" | "Зарегистрирован" | "Зарегистрирована":
+                    tg = tag.string.strip()
+                    if tg == "Зарегистрирована":
+                        tg = "Зарегистрирован"
                     data[tag.string.strip()] = vals[i].find("time")["title"].split(", ")[0]
-                case "Активность" | "Контактная информация" | "Приглашен"| "Пригласил на сайт":
+                case "Активность" | "Контактная информация" | "Приглашен"| "Пригласил на сайт" | "Приглашена"| "Пригласила на сайт" :
                     pass
                 case _:
                     data[tag.string.strip()] = vals[i].text.strip().replace("\xa0", " ")
