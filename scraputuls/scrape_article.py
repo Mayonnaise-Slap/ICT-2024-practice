@@ -48,28 +48,30 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
             'Звук']
             }
     """
-    article_tags = [
-        n.text.strip(" *") for n in article.find_all(
-            "a", {
-                "class": "tm-publication-hub__link"
-            })
-    ]
-    traits_soup = article.find_all(
-        "div", {
-            "class": "tm-article-snippet__stats"
-        }
-    )[0].find_all("span")
-
     trait_map = dict()
+    try:
+        article_tags = [
+            n.text.strip(" *") for n in article.find_all(
+                "a", {
+                    "class": "tm-publication-hub__link"
+                })
+        ]
+        traits_soup = article.find_all(
+            "div", {
+                "class": "tm-article-snippet__stats"
+            }
+        )[0].find_all("span")
 
-    for trait_id in range(len(traits_soup) // 2):
-        trait = traits_soup[trait_id * 2].title.text.strip()
-        value = traits_soup[trait_id * 2 + 1].text.strip()
+        for trait_id in range(len(traits_soup) // 2):
+            trait = traits_soup[trait_id * 2].title.text.strip()
+            value = traits_soup[trait_id * 2 + 1].text.strip()
 
-        trait_map[trait] = value
+            trait_map[trait] = value
 
-    trait_map["tags"] = article_tags
-    trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a["href"]
+        trait_map["tags"] = article_tags
+        trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a["href"]
+    except AttributeError:
+        pass
     return trait_map
 
 
