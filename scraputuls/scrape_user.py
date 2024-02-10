@@ -35,7 +35,7 @@ def scrape_profile(profile_link: str) -> dict:
                     tg = tag.string.strip()
                     if tg == "Зарегистрирована":
                         tg = "Зарегистрирован"
-                    data[tag.string.strip()] = vals[i].find("time")["title"].split(", ")[0]
+                    data[tg] = vals[i].find("time")["title"].split(", ")[0]
                 case "Активность" | "Контактная информация" | "Приглашен"| "Пригласил на сайт" | "Приглашена"| "Пригласила на сайт" :
                     pass
                 case _:
