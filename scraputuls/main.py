@@ -48,7 +48,7 @@ def scrape_users(urls: list) -> dict:
     return contents.get()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     with open("../data/comments.json", "r") as f:
         data = json.load(f)
 
