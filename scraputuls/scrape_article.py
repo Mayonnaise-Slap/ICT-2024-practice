@@ -51,16 +51,12 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
     trait_map = dict()
     try:
         article_tags = [
-            n.text.strip(" *") for n in article.find_all(
-                "a", {
-                    "class": "tm-publication-hub__link"
-                })
+            n.text.strip(" *")
+            for n in article.find_all("a", {"class": "tm-publication-hub__link"})
         ]
-        traits_soup = article.find_all(
-            "div", {
-                "class": "tm-article-snippet__stats"
-            }
-        )[0].find_all("span")
+        traits_soup = article.find_all("div", {"class": "tm-article-snippet__stats"})[
+            0
+        ].find_all("span")
 
         for trait_id in range(len(traits_soup) // 2):
             trait = traits_soup[trait_id * 2].title.text.strip()
@@ -69,7 +65,9 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
             trait_map[trait] = value
 
         trait_map["tags"] = article_tags
-        trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a["href"]
+        trait_map["creator"] = article.find("span", {"class": "tm-user-info__user"}).a[
+            "href"
+        ]
     except AttributeError:
         pass
     return trait_map
@@ -78,10 +76,10 @@ def get_article_attrs(article: BeautifulSoup) -> dict:
 def get_comments_accounts(article_link: str) -> tuple:
     comments = get_soup(article_link + "comments/")
     return tuple(
-        "https://habr.com" + p.a["href"] for p in comments.find_all(
-            "span", {
-                "class": "tm-user-info__user tm-user-info__user_appearance-default"
-            }
+        "https://habr.com" + p.a["href"]
+        for p in comments.find_all(
+            "span",
+            {"class": "tm-user-info__user tm-user-info__user_appearance-default"},
         )
     )
 
